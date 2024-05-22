@@ -1,0 +1,14 @@
+#mensajesEnviados{
+    background-color: #ababab;
+    min-height: 200px;
+    overflow: auto;
+}
+#menaje{
+    width: 800px;
+
+}
+
+#respuesta{
+    background-color: #ababab;
+    min-height: 200px;
+}
