@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Comppatible" content="ie=edge">
     <title>Interfaz Puzzlebot</title>
-    <script src="js/comunicacion.js"></script>
+
     <link rel="stylesheet" href="css/base.css">
 </head>
 <body>
+    <img id="compressedImage" src="" alt="Imagen Comprimida">
     <div id="mensajesEnviados"></div>
-    <input text="text" id="mensaje"/><buttom id="bEnviar">Enviar</buttom>
+    <input text="text" id="mensaje" value='{"op":"subscribe","topic":"/prueba"}'/><buttom id="bEnviar">Enviar</buttom>
     <div id="respuesta"></div>
+    
+    <script src="js/comunicacion.js"></script>
 </body>
+
 </html>

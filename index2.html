@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualización de Imagen</title>
+</head>
+<body>
+    <img id="imageDisplay" src="" alt="Imagen">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/roslib/0.20.5/roslib.min.js"></script>
+    <script>
+        var ros = new ROSLIB.Ros({
+            url: 'ws://<ws://localhost:9090>'
+        });
+
+        var imageTopic = new ROSLIB.Topic({
+            ros: ros,
+            name: '/image_topic/compressed',
+            messageType: 'std_msgs/String'
+        });
+
+        imageTopic.subscribe(function(message) {
+            var imageDataUrl = 'data:image/jpeg;base64,' + message.data;
+            document.getElementById('imageDisplay').src = imageDataUrl;
+        });
+    </script>
+</body>
+</html>
