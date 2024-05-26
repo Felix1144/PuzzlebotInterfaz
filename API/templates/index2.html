@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Dashboard</title>
+    <link rel="stylesheet" href="css/base.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>Puzzlebot</header>
+    <div class="top-container">
+        <div class="box">
+            <h2>Position and Orientation</h2>
+            <p>X: <span id="posX">0</span></p>
+            <p>Y: <span id="posY">0</span></p>
+            <p>Orientation: <span id="orientation">0</span></p>
+        </div>
+        <div class="box">
+            <h2>Wheel Speeds</h2>
+            <p>Left Wheel (wl): <span id="wl">0</span> rad/s</p>
+            <p>Right Wheel (wr): <span id="wr">0</span> rad/s</p>
+        </div>
+        <div class="box">
+            <h2>General Velocities</h2>
+            <p>Linear Velocity (V): <span id="V">0</span> m/s</p>
+            <p>Angular Velocity (W): <span id="W">0</span> rad/s</p>
+        </div>
+    </div>
+    <div class="bottom-container">
+        <div class="video-container">
+            <h2>Camera Feed</h2>
+            <img id="rosImage" src="" alt="ROS Image" />
+        </div>
+        <div class="graph-container">
+            <h2>Position Graph</h2>
+            <canvas id="positionChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function fetchImage() {
+            fetch('/image')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('No image available');
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('rosImage').src = url;
+                })
+                .catch(error => {
+                    console.error('Error fetching image:', error);
+                });
+        }
+
+        function fetchData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('posX').textContent = data.posX;
+                    document.getElementById('posY').textContent = data.posY;
+                    document.getElementById('orientation').textContent = data.orientation;
+                    document.getElementById('wl').textContent = data.wl;
+                    document.getElementById('wr').textContent = data.wr;
+                    document.getElementById('V').textContent = data.V;
+                    document.getElementById('W').textContent = data.W;
+                    
+                    // Actualizar la gráfica con los nuevos datos de posición
+                    updateChart(data.posX, data.posY);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        // Datos iniciales para la gráfica
+        let positionData = {
+            labels: [],
+            datasets: [{
+                label: 'Position',
+                data: [],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        };
+
+        // Configuración de la gráfica
+        let config = {
+            type: 'line',
+            data: positionData,
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Position X'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Position Y'
+                        }
+                    }
+                }
+            }
+        };
+
+        // Inicializar la gráfica
+        let positionChart = new Chart(
+            document.getElementById('positionChart'),
+            config
+        );
+
+        // Actualizar la gráfica en tiempo real
+        function updateChart(posX, posY) {
+            positionData.labels.push(posX);
+            positionData.datasets[0].data.push({x: posX, y: posY});
+            positionChart.update();
+        }
+
+        setInterval(fetchImage, 1000); // Fetch a new image every second
+        setInterval(fetchData, 1000); // Fetch new data every second
+    </script>
+</body>
+</html>
