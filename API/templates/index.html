@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>ROS Image Viewer</h1>
-    <img id="rosImage" src="" alt="ROS Image" style="max-width: 100%; max-height: 100%;" />
+    <img id="rosImage" src="" alt="ROS Image"  /> 
     <script type="text/javascript">
         function fetchImage() {
             fetch('/image')
@@ -24,7 +24,7 @@
                 });
         }
 
-        setInterval(fetchImage, 1000); // Fetch a new image every second
+        setInterval(fetchImage, 1000); // Fetch a new image every second style="max-width: 100%; max-height: 100%;"
     </script>
 </body>
 </html>
