@@ -1,11 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>ROS Image Viewer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+        }
+        header {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 20px;
+        }
+
+        .top-container {
+            display: flex;
+            flex-direction: row;
+            width: 90%;
+            justify-content: space-around;
+            margin-top: 15px;
+            max-height: 150px;
+        }
+
+        .bottom-container {
+            display: flex;
+            flex-direction: row;
+            width: 90%;
+            justify-content: space-around;
+            margin-top: 15px;
+            height: calc(100vh - 240px); /* Adjust to fit the screen without scrolling */
+        }
+
+        .video-container, .graph-container {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .graph-container canvas {
+            max-width: 100% !important;  /* Hacer que la gráfica ocupe el 100% del contenedor */
+            max-height: 95% !important; /* Mantener la relación de aspecto */
+        }
+
+        .box {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            width: 25%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .box h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 20px;
+        }
+        .graph-container h2{
+            margin-top: 0;
+            color: #333;
+            font-size: 20px;    
+        }
+
+        .video-container h2{
+            margin-top: 0;
+            color: #333;
+            font-size: 20px;
+        }
+        .box p{
+            font-size: 14px;
+        }
+
+        #rosImage {
+            max-width: 100%;
+            max-height: 80%;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>ROS Image Viewer</h1>
-    <img id="rosImage" src="" alt="ROS Image"  /> 
+    <header>Puzzlebot</header>
+    <div class="top-container">
+        <div class="box">
+            <h2>Position and Orientation</h2>
+            <p>X: <span id="posX">0</span></p>
+            <p>Y: <span id="posY">0</span></p>
+            <p>Orientation: <span id="orientation">0</span></p>
+        </div>
+        <div class="box">
+            <h2>Wheel Speeds</h2>
+            <p>Left Wheel (wl): <span id="wl">0</span> rad/s</p>
+            <p>Right Wheel (wr): <span id="wr">0</span> rad/s</p>
+        </div>
+        <div class="box">
+            <h2>General Velocities</h2>
+            <p>Linear Velocity (V): <span id="V">0</span> m/s</p>
+            <p>Angular Velocity (W): <span id="W">0</span> rad/s</p>
+        </div>
+    </div>
+    <div class="bottom-container">
+        <div class="video-container">
+            <h2>Camera Feed</h2>
+            <img id="rosImage" src="" alt="ROS Image" />
+        </div>
+    </div>
     <script type="text/javascript">
         function fetchImage() {
             fetch('/image')
@@ -24,7 +139,24 @@
                 });
         }
 
-        setInterval(fetchImage, 1000); // Fetch a new image every second style="max-width: 100%; max-height: 100%;"
+        function fetchData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('posX').textContent = data.x.toFixed(2);
+                    document.getElementById('posY').textContent = data.y.toFixed(2);
+                    document.getElementById('orientation').textContent = data.theta.toFixed(2);
+                    document.getElementById('wl').textContent = data.wl.toFixed(2);
+                    document.getElementById('wr').textContent = data.wr.toFixed(2);
+                    document.getElementById('V').textContent = data.vel_v.toFixed(2);
+                    document.getElementById('W').textContent = data.vel_w.toFixed(2);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        setInterval(fetchImage, 100); // Fetch a new image every second
+        setInterval(fetchData, 1000); // Fetch new data every second
     </script>
 </body>
 </html>

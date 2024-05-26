@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robot Dashboard</title>
-    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     <header>Puzzlebot</header>
@@ -32,10 +33,6 @@
             <h2>Camera Feed</h2>
             <img id="rosImage" src="" alt="ROS Image" />
         </div>
-        <div class="graph-container">
-            <h2>Position Graph</h2>
-            <canvas id="positionChart" width="400" height="400"></canvas>
-        </div>
     </div>
     <script type="text/javascript">
         function fetchImage() {
@@ -59,73 +56,23 @@
             fetch('/data')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('posX').textContent = data.posX;
-                    document.getElementById('posY').textContent = data.posY;
-                    document.getElementById('orientation').textContent = data.orientation;
-                    document.getElementById('wl').textContent = data.wl;
-                    document.getElementById('wr').textContent = data.wr;
-                    document.getElementById('V').textContent = data.V;
-                    document.getElementById('W').textContent = data.W;
+                    document.getElementById('posX').textContent = data.x.toFixed(2);
+                    document.getElementById('posY').textContent = data.y.toFixed(2);
+                    document.getElementById('orientation').textContent = data.theta.toFixed(2);
+                    document.getElementById('wl').textContent = data.wl.toFixed(2);
+                    document.getElementById('wr').textContent = data.wr.toFixed(2);
+                    document.getElementById('V').textContent = data.vel_v.toFixed(2);
+                    document.getElementById('W').textContent = data.vel_w.toFixed(2);
                     
                     // Actualizar la gráfica con los nuevos datos de posición
-                    updateChart(data.posX, data.posY);
+                    updateChart(data.posX.toFixed(2), data.posY).toFixed(2);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         }
 
-        // Datos iniciales para la gráfica
-        let positionData = {
-            labels: [],
-            datasets: [{
-                label: 'Position',
-                data: [],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: false,
-                tension: 0.1
-            }]
-        };
-
-        // Configuración de la gráfica
-        let config = {
-            type: 'line',
-            data: positionData,
-            options: {
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        title: {
-                            display: true,
-                            text: 'Position X'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Position Y'
-                        }
-                    }
-                }
-            }
-        };
-
-        // Inicializar la gráfica
-        let positionChart = new Chart(
-            document.getElementById('positionChart'),
-            config
-        );
-
-        // Actualizar la gráfica en tiempo real
-        function updateChart(posX, posY) {
-            positionData.labels.push(posX);
-            positionData.datasets[0].data.push({x: posX, y: posY});
-            positionChart.update();
-        }
-
-        setInterval(fetchImage, 1000); // Fetch a new image every second
+        setInterval(fetchImage, 100); // Fetch a new image every second
         setInterval(fetchData, 1000); // Fetch new data every second
     </script>
 </body>
