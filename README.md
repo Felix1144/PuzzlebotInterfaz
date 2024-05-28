@@ -18,7 +18,11 @@ Following is the DFD which was made using PlantUML:
 
 ## Team
 Hector Ruben Cortes - A00831592
-José Edgar Hernández Cancino Estrada - A00827269                                                            
+
+José Edgar Hernández Cancino Estrada - A00827269     
+
 Carlos David Olan Olvera - A01611252
+
 Luis Carlos Olave Vera - A01233810
+
 Félix Alfonso Torres Rodríguez - A00829771
