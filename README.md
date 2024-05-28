@@ -5,6 +5,8 @@ The web server is made in python with Flask library.
 
 ## Plant 
 Following is the DFD which was made using PlantUML:
+
+
 ![DFD](dfd.png)
 
 ## Image of the Interface Web
